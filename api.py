@@ -62,8 +62,10 @@ def get_detector_model():
 @app.on_event("startup")
 async def startup_event():
     logger.info("Đang khởi động Server...")
-    get_extractor()  # Load mô hình ngay khi server chạy để tăng tốc độ phản hồi
-    get_detector_model()  # Load detector YOLO
+    # Tắt load model lúc khởi động để tránh lỗi Timeout 5 phút của Render
+    # Load mô hình sẽ được dời sang lúc có request đầu tiên
+    # get_extractor()  
+    # get_detector_model()
 
 @app.get("/")
 def read_root():
