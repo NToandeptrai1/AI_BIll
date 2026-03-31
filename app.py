@@ -87,9 +87,9 @@ def get_shared_detector():
     if _detector is not None:
         return _detector, None
 
-    model_path = BASE_DIR / "best.pt"
+    model_path = BASE_DIR / "best.onnx"
     if not model_path.exists():
-        return None, "Không tìm thấy best.pt"
+        return None, "Không tìm thấy best.onnx"
 
     detector, err = get_detector(str(model_path))
     if detector:
@@ -165,8 +165,8 @@ def process_invoice_stream(
         add_status_line(status_lines, f"Preprocess xong: {preprocess_steps}", started_at)
         yield snapshot("running")
 
-        add_status_line(status_lines, "Đang chạy best.pt để tìm vùng hóa đơn", started_at)
-        progress(0.30, desc="Chạy best.pt")
+        add_status_line(status_lines, "Đang chạy best.onnx để tìm vùng hóa đơn", started_at)
+        progress(0.30, desc="Chạy best.onnx")
         yield snapshot("running")
         detector, d_err = get_shared_detector()
         if detector:
@@ -175,14 +175,14 @@ def process_invoice_stream(
                 det_kind = detector_meta.get("detector_kind", "?")
                 add_status_line(
                     status_lines,
-                    f"best.pt hoạt động: kind={det_kind}, bbox={detector_meta.get('detector_bbox')}",
+                    f"best.onnx hoạt động: kind={det_kind}, bbox={detector_meta.get('detector_bbox')}",
                     started_at,
                 )
             else:
-                add_status_line(status_lines, f"best.pt không dùng được: {detector_err}", started_at)
+                add_status_line(status_lines, f"best.onnx không dùng được: {detector_err}", started_at)
         else:
             detector_err = d_err
-            add_status_line(status_lines, f"best.pt không load được: {detector_err}", started_at)
+            add_status_line(status_lines, f"best.onnx không load được: {detector_err}", started_at)
         
         preprocess_mode = "preprocess->detect->filter->gemini"
         yield snapshot("running")

@@ -39,21 +39,21 @@ def get_extractor():
     return _extractor
 
 def get_detector_model():
-    """Khởi tạo detector YOLO từ best.pt"""
+    """Khởi tạo detector YOLO từ best.onnx"""
     global _detector
     if _detector is None:
         try:
             base_dir = Path(__file__).parent
             model_path = base_dir / "best.onnx"
             if not model_path.exists():
-                logger.warning(f"⚠️ Không tìm thấy best.pt tại {model_path}")
+                logger.warning(f"⚠️ Không tìm thấy best.onnx tại {model_path}")
                 return None
             _detector, error = get_detector(str(model_path))
             if error:
                 logger.warning(f"⚠️ Lỗi tải detector: {error}")
                 _detector = None
             else:
-                logger.info("✅ Đã tải detector YOLO (best.pt) vào RAM")
+                logger.info("✅ Đã tải detector YOLO (best.onnx) vào RAM")
         except Exception as e:
             logger.error(f"❌ Lỗi khởi tạo detector: {e}")
             _detector = None
@@ -111,7 +111,7 @@ async def extract_invoice(file: UploadFile = File(...)):
 async def extract_invoice_full(file: UploadFile = File(...)):
     """
     API Endpoint: Quá trình trích xuất đầy đủ
-    1. Detect vùng hóa đơn dùng YOLO (best.pt)
+    1. Detect vùng hóa đơn dùng YOLO (best.onnx)
     2. Trích xuất thông tin dùng Gemini
     """
     if not file.content_type.startswith("image/"):
